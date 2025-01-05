@@ -3,7 +3,7 @@ import 'package:cred_mobile/constants/loader.dart';
 import 'package:cred_mobile/models/items.dart';
 import 'package:cred_mobile/provider/provider.dart';
 import 'package:cred_mobile/screens/emi_screen.dart';
-import 'package:cred_mobile/screens/first_screen.dart';
+import 'package:cred_mobile/screens/credit_screen.dart';
 import 'package:cred_mobile/screens/loan_screen.dart';
 import 'package:cred_mobile/service/auth_service.dart';
 import 'package:flutter/material.dart';
@@ -82,8 +82,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                         ),
                       ),
       ),),
+      //three expandible and collapsible cards 
         body:  items == null ? const Center(child: Loader()) : 
-              Consumer<MyModel>(
+              Consumer<Counter>(
                 builder: (context, model, child) {
 
                   return Stack(
@@ -103,18 +104,17 @@ class _HomeScreenState extends State<HomeScreen> {
                             right: 0,
                             bottom: 0,
                         child: LoanScreen(completedInfo: model.value==2,item : items)) ,
+
+                  //bottom button 
                          BottomButton(
                             onTap : (){
                                if(model.value<=1) {
                     model.value++;
                   }
                 setState(() {
-                 
-                  
                 });
-                
-                             
-                            }, title: items!.items![model.value].ctaText!,
+                 },
+              title: items!.items![model.value].ctaText!,
                           ),
                 
                     ]);}

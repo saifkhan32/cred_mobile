@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'package:cred_mobile/constants/loader.dart';
+import 'package:cred_mobile/constants/utils.dart';
 import 'package:cred_mobile/models/items.dart';
 import 'package:cred_mobile/widgets/dial_painter.dart';
 import 'package:flutter/material.dart';
@@ -70,7 +71,7 @@ class _CreditSelectorState extends State<CreditSelector> with SingleTickerProvid
          
         GestureDetector(
             onTap: () {
-                Provider.of<MyModel>(context, listen: false).value--;
+                Provider.of<Counter>(context, listen: false).value--;
                 _controller.reverse();
               setState(() {
             
@@ -151,23 +152,10 @@ class _CreditSelectorState extends State<CreditSelector> with SingleTickerProvid
                  
                   const SizedBox(height: 10,),
                   
-                          Text(
-                        totalItems.body!.title!,
-                          style: const TextStyle(
-                            color: Color.fromARGB(255, 103, 146, 158),
-                                fontSize: 14,
-                                fontWeight: FontWeight.bold
-                                      ),
-                                      ),
-                                              const SizedBox(height: 3),
-                        Text(
-                        totalItems.body!.subtitle!,
-                        style: TextStyle(
-                            color: Colors.grey[400],
-                              fontSize: 12,
-                            ),
-                          )],
-                                                                   ),
+                        titleText(totalItems.body!.title!),
+                         const SizedBox(height: 3),
+                       subtitleText(totalItems.body!.subtitle!),
+                        ] ),
                           const SizedBox(height: 10,),
                     Card(
                       elevation: 5,

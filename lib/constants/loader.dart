@@ -8,8 +8,6 @@ class Loader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: Container(
-        color: const Color(0xFF272B34),
-        
         child: LoadingAnimationWidget.horizontalRotatingDots(color: const Color.fromARGB(255, 235, 125, 86), size : 50)),
     );
   }

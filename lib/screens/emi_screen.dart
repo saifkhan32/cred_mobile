@@ -1,5 +1,6 @@
 
 import 'package:cred_mobile/constants/loader.dart';
+import 'package:cred_mobile/constants/utils.dart';
 import 'package:cred_mobile/models/items.dart';
 import 'package:cred_mobile/provider/provider.dart';
 
@@ -23,7 +24,9 @@ class _EMISelectionScreenState extends State<EMISelectionScreen> with SingleTick
   int selectedPlanIndex = 0;
   NumberFormat numberFormat = NumberFormat.decimalPattern('hi');
    late AnimationController _controller;
-void initState() {
+
+@override
+  void initState() {
     super.initState();
     _controller = AnimationController(
       duration: const Duration(milliseconds: 180),
@@ -54,7 +57,8 @@ void initState() {
       backgroundColor: const Color.fromARGB(255, 34, 36, 43),
       body:  widget.completedInfo == true ? _displayExpandedInfo() :  _handleProceed() ??  SlideTransition(
             
-          position: Tween<Offset>(begin: const Offset(0, 1), end: const Offset(0, 0)).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut)),
+          position: Tween<Offset>(begin: const Offset(0, 1), end: const Offset(0, 0)).
+          animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut)),
           child: _displayCollapsedInfo())
    );
   }
@@ -65,7 +69,7 @@ void initState() {
         children: [
      GestureDetector(
             onTap: () {
-              Provider.of<MyModel>(context, listen: false).value--;
+              Provider.of<Counter>(context, listen: false).value--;
               _controller.reverse(from: 1);
               setState(() {
                 
@@ -76,8 +80,10 @@ void initState() {
                 width: MediaQuery.sizeOf(context).width,
                     decoration: BoxDecoration(
                       color: const Color.fromARGB(255, 35, 37, 44),
-                      borderRadius: const BorderRadius.only(topLeft: Radius.circular(20),topRight: Radius.circular(20)),
-                      boxShadow: [BoxShadow(
+                      borderRadius: const BorderRadius.only(topLeft: Radius.circular(20),
+                      topRight: Radius.circular(20)),
+                      boxShadow: [
+                        BoxShadow(
                   color: Colors.black.withOpacity(0.2), // Shadow color
                   offset: const Offset(4, 4), // Shadow offset (horizontal, vertical)
                   blurRadius: 8, // Blur radius
@@ -122,7 +128,7 @@ void initState() {
                       
                            Text(
                                     totalItems.body!.key2!,
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                       color: Colors.grey,
                                       fontSize: 10,
                                     ),
@@ -161,22 +167,9 @@ void initState() {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                 
-                 Text(
-                        totalItems.body!.title!,
-                          style: const TextStyle(
-                            color: Color.fromARGB(255, 103, 146, 158),
-                                fontSize: 14,
-                                fontWeight: FontWeight.bold
-                                      ),
-                                      ),
-                  const SizedBox(height: 8),
-                   Text(
-                        totalItems.body!.subtitle!,
-                        style: TextStyle(
-                            color: Colors.grey[400],
-                              fontSize: 12,
-                            ),
-                          ),
+                titleText(totalItems.body!.title!),
+                  const SizedBox(height: 5),
+                  subtitleText(totalItems.body!.subtitle!),
                   const SizedBox(height: 24),
                     
                                  
@@ -191,11 +184,11 @@ void initState() {
                         Color ? color ;
                         final plan = totalItems.body!.items![index];
                         if(index == 0)
-                          color = const Color.fromARGB(246, 104, 47, 39);
+                          color = const Color.fromARGB(246, 49, 31, 28);
                         else if (index == 1)
                           color = const Color.fromARGB(172, 202, 174, 248);
                         else
-                        color = const Color.fromARGB(255, 35, 74, 105);
+                        color = const Color.fromARGB(255, 55, 82, 105);
                         final isSelected = selectedPlanIndex == index;
                         final splitted = plan.emi!.split(' ');
                         return GestureDetector(
@@ -217,7 +210,7 @@ void initState() {
                                     children: [
                                     
                                     Container(
-                                      margin: EdgeInsets.only(top : 15),
+                                      margin: const EdgeInsets.only(top : 15),
                                       child: CircleAvatar(
                                         backgroundColor: const Color.fromARGB(255, 161, 161, 161),
                                         radius: 11,
@@ -271,6 +264,7 @@ void initState() {
                                     ],
                                   ),
                                 ),
+                   //recommended box in the cards section
                                 if(plan.tag == 'recommended')
                                      Positioned(
                           top: 0,
@@ -306,32 +300,19 @@ void initState() {
                   
                   // Create Plan Button
                   const SizedBox(height: 24),
-                  Container(
-                    width: 150,
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.white24),
-                      borderRadius: BorderRadius.circular(24),
-                    ),
-                    child: TextButton(
-                      
-                      onPressed: () {},
-                      style: TextButton.styleFrom(
-                        
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 24,
-                          vertical: 12,
-                        ),
-                      ),
-                      
-                      child: Text(
-                        totalItems.body!.footer!,
-                        style: TextStyle(
-                          color: Colors.white.withOpacity(0.8),
-                          fontSize: 10
-                        ),
-                      ),
-                    ),
-                  ),
+                   Container(
+                          width: 160,
+                          child: OutlinedButton(
+                            
+                            onPressed: () {},
+                            child: Text(
+                              totalItems.body!.footer!,
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 11
+                              ),
+                            ),
+                          )),
                   
                   const Spacer(),
                   

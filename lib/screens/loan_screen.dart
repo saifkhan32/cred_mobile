@@ -1,5 +1,6 @@
 
 import 'package:cred_mobile/constants/loader.dart';
+import 'package:cred_mobile/constants/utils.dart';
 import 'package:cred_mobile/models/items.dart';
 import 'package:flutter/material.dart';
 
@@ -17,10 +18,7 @@ class LoanScreen extends StatefulWidget {
 
 class _LoanScreenState extends State<LoanScreen> {
 
-  // Sample data for collapsible sections
-  final List<int> creditOptions = [50000, 100000, 150000, 200000];
-  final List<int> emiOptions = [4247, 5000, 6000, 7000];
-  final List<int> durationOptions = [6, 12, 18, 24];
+    int selectedPlanIndex = 0;
 
 
 
@@ -42,7 +40,7 @@ class _LoanScreenState extends State<LoanScreen> {
                   // Bank Account Section
                   Container(
                     width: MediaQuery.sizeOf(context).width,
-                    height: 445,
+                    height: 400,
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
                       color: const Color(0xFF272B34),
@@ -51,23 +49,10 @@ class _LoanScreenState extends State<LoanScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                          Text(
-                      totalItems.body!.title!,
-                        style: const TextStyle(
-                          color: Color.fromARGB(255, 103, 146, 158),
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold
-                                    ),
-                                    ),
-                                    const SizedBox(height: 3,),
-                       Text(
-                      totalItems.body!.subtitle!,
-                      style: TextStyle(
-                          color: Colors.grey[400],
-                            fontSize: 10,
-                          ),
-                        ),
-                        const SizedBox(height: 20),
+                         titleText(totalItems.body!.title!),
+                          const SizedBox(height: 3,),
+                      subtitleText(totalItems.body!.subtitle!),
+                        const SizedBox(height: 15),
                         SizedBox(
                           height: 140,
                           child: ListView.builder(
@@ -75,59 +60,71 @@ class _LoanScreenState extends State<LoanScreen> {
                             itemCount: totalItems.body!.items!.length,
                             itemBuilder: (context,index)
                             {
-                                final plan = totalItems.body!.items![index];
-                            
-                            return Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Row(
-                                  children: [
-                                    Container(
-                                      padding: const EdgeInsets.all(8),
-                                      decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        borderRadius: BorderRadius.circular(8),
+                            final plan = totalItems.body!.items![index];
+                            final isSelected = selectedPlanIndex == index;
+                            return GestureDetector(
+                              onTap: (){
+                                setState(() {
+                                  selectedPlanIndex = index;
+                                });
+                              },
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Row(
+                                    children: [
+                                      Container(
+                                        padding: const EdgeInsets.all(8),
+                                        decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          borderRadius: BorderRadius.circular(8),
+                                        ),
+                                        child: Image.network(
+                                          'https://static-asset.inc42.com/hdfc-bank.png',
+                                          height: 24,
+                                          width: 24,
+                                        ),
                                       ),
-                                      child: Image.network(
-                                        'https://static-asset.inc42.com/hdfc-bank.png',
-                                        height: 24,
-                                        width: 24,
+                                      const SizedBox(width: 12),
+                                      Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            plan.title!,
+                                            style: const TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 13,
+                                              fontWeight: FontWeight.w500
+                                            ),
+                                          ),
+                                          Text(
+                                            plan.subtitle!,
+                                            style: const TextStyle(
+                                              color: Colors.grey,
+                                              fontSize: 12,
+                                            ),
+                                          ),
+                                          SizedBox(height: 10,)
+                                        ],
                                       ),
-                                    ),
-                                    const SizedBox(width: 12),
-                                    Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          plan.title!,
-                                          style: const TextStyle(
+                                    ],
+                                  ),
+                                  CircleAvatar(
+                                        backgroundColor: const Color.fromARGB(255, 161, 161, 161),
+                                        radius: 11,
+                                          child: Icon(
+                                            isSelected ? Icons.check : null,
                                             color: Colors.white,
-                                            fontSize: 13,
-                                            fontWeight: FontWeight.w500
-                                          ),
-                                        ),
-                                        Text(
-                                          plan.subtitle!,
-                                          style: const TextStyle(
-                                            color: Colors.grey,
-                                            fontSize: 12,
-                                          ),
-                                        ),
-                                        SizedBox(height: 10,)
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                                const Icon(
-                                  Icons.circle,
-                                  color: Color.fromARGB(255, 82, 81, 81),
-                                ),
-                              ],
+                                            size: 20,
+                                          )),
+                                         
+                                ],
+                              ),
                             );
                                           }),
                         ),
-                        const SizedBox(height: 21),
-                        Container(
+                        const SizedBox(height: 15),
+                        SizedBox(
                           width: 130,
                           child: OutlinedButton(
                             
