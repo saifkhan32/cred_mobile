@@ -1,228 +1,281 @@
+
+import 'package:cred_mobile/constants/loader.dart';
+import 'package:cred_mobile/models/items.dart';
+import 'package:cred_mobile/provider/provider.dart';
+
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 class EMISelectionScreen extends StatefulWidget {
-  const EMISelectionScreen({Key? key}) : super(key: key);
+  final bool completedInfo;
+  
+  final ItemData? item;
+  
+ 
+  const EMISelectionScreen({super.key, required this.completedInfo, required this.item  });
 
   @override
   State<EMISelectionScreen> createState() => _EMISelectionScreenState();
 }
 
-class _EMISelectionScreenState extends State<EMISelectionScreen> {
+class _EMISelectionScreenState extends State<EMISelectionScreen> with SingleTickerProviderStateMixin{
   int selectedPlanIndex = 0;
-
-  final List<Map<String, dynamic>> plans = [
-    {
-      'amount': 4247,
-      'duration': 12,
-      'recommended': false,
-    },
-    {
-      'amount': 5580,
-      'duration': 9,
-      'recommended': true,
-    },
-    {
-      'amount': 7890,
-      'duration': 6,
-      'recommended': false,
-    },
-  ];
+  NumberFormat numberFormat = NumberFormat.decimalPattern('hi');
+   late AnimationController _controller;
+void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: const Duration(milliseconds: 180),
+      vsync: this,
+    );
+    
+    
+  }
 
   @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  _handleProceed() {
+     
+    _controller.forward();
+    setState(() {
+      
+    });
+    return null;
+  }
+  @override
   Widget build(BuildContext context) {
+    
     return Scaffold(
-      backgroundColor: const Color(0xFF1A1A1A),
-      body: SafeArea(
-        child: Stack(
-          children:[ Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Header
-                const Row(
+      backgroundColor: const Color.fromARGB(255, 34, 36, 43),
+      body:  widget.completedInfo == true ? _displayExpandedInfo() :  _handleProceed() ??  SlideTransition(
+            
+          position: Tween<Offset>(begin: const Offset(0, 1), end: const Offset(0, 0)).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut)),
+          child: _displayCollapsedInfo())
+   );
+  }
+   _displayCollapsedInfo() {
+    final totalItems = widget.item!.items![1].closedState;
+    final selectedItem = widget.item!.items![1].openState;
+    return totalItems == null ? const Loader() : Column(
+        children: [
+     GestureDetector(
+            onTap: () {
+              Provider.of<MyModel>(context, listen: false).value--;
+              _controller.reverse(from: 1);
+              setState(() {
+                
+              });
+              },
+             child: Container(
+              height: 80,
+                width: MediaQuery.sizeOf(context).width,
+                    decoration: BoxDecoration(
+                      color: const Color.fromARGB(255, 35, 37, 44),
+                      borderRadius: const BorderRadius.only(topLeft: Radius.circular(20),topRight: Radius.circular(20)),
+                      boxShadow: [BoxShadow(
+                  color: Colors.black.withOpacity(0.2), // Shadow color
+                  offset: const Offset(4, 4), // Shadow offset (horizontal, vertical)
+                  blurRadius: 8, // Blur radius
+                  spreadRadius: 2, // Spread radius
+                ),]),
+                      
+                      child:  Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Icon(Icons.close, color: Colors.white60),
-                    Icon(Icons.question_mark, color: Colors.white60),
+                    Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                      
+                           Text(
+                                    totalItems.body!.key1!,
+                                    style: const TextStyle(
+                                      color: Colors.grey,
+                                      fontSize: 10,
+                                    ),
+                                  ),
+                                       const SizedBox(height: 5,),
+                                   RichText(text :
+                                            TextSpan(text: 
+                                                selectedItem!.body!.items![selectedPlanIndex].emi!,
+                                              style: const TextStyle(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.white
+                                              ),
+                                            ),
+                                          ),
+                        
+                                        ]),
+                    ),
+                     Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                      
+                           Text(
+                                    totalItems.body!.key2!,
+                                    style: TextStyle(
+                                      color: Colors.grey,
+                                      fontSize: 10,
+                                    ),
+                                  ),
+                                       const SizedBox(height: 5,),
+                                   RichText(text:  TextSpan(text: selectedItem.body!.items![selectedPlanIndex].duration!,
+                                          style: const TextStyle(fontSize: 17,color: Colors.white,fontWeight: FontWeight.bold),
+                                         ),),
+                        
+                                        ]),
+                    ),
+                    const Padding
+                    (
+                      padding: EdgeInsets.symmetric(horizontal: 10),
+                      child: Icon(Icons.keyboard_arrow_down,size: 20,color: Colors.grey,))
                   ],
                 ),
-                const SizedBox(height: 24),
+              ),
+           ),
+         
+
+      ]);
+    
+  }
+  _displayExpandedInfo()
+  {
+    final totalItems = widget.item!.items![1].openState;
+    return totalItems == null ? const Loader() : Container(
+          width: MediaQuery.sizeOf(context).width,
+                    
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF272B34),
+                      borderRadius: BorderRadius.circular(12)),
+      child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
                 
-                // Credit Amount
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'credit amount',
-                          style: TextStyle(
-                            color: Colors.white60,
-                            fontSize: 14,
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          '₹1,50,000',
-                          style: TextStyle(
-                            color: Colors.white.withOpacity(0.9),
-                            fontSize: 24,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const Icon(
-                      Icons.keyboard_arrow_down,
-                      color: Colors.white60,
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 32),
-                
-                // Repayment Title
-                Text(
-                  'how do you wish to repay?',
-                  style: TextStyle(
-                    color: Colors.white.withOpacity(0.9),
-                    fontSize: 20,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  'choose one of our recommended plans or make your own',
-                  style: TextStyle(
-                    color: Colors.white.withOpacity(0.6),
-                    fontSize: 14,
-                  ),
-                ),
-                const SizedBox(height: 24),
-                  
-                               
-                // Plans
-                SizedBox(
-                  height: 160,
-                  child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    itemCount: plans.length,
-                    itemBuilder: (context, index) {
-                      
-                      Color ? color ;
-                      final plan = plans[index];
-                      if(index == 0)
-                        color = const Color.fromARGB(255, 114, 80, 67);
-                      else if (index == 1)
-                        color = Colors.indigo;
-                      else
-                      color = const Color.fromARGB(255, 35, 74, 105);
-                      final isSelected = selectedPlanIndex == index;
-                      
-                      return GestureDetector(
-                        onTap: () => setState(() => selectedPlanIndex = index),
-                        child: Container(
-                          width: 140,
-                          margin: const EdgeInsets.only(right: 16),
-                          decoration: BoxDecoration(
-                            color: color,
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                          child: Stack(
-                            children: [
-                            
-                              Padding(
-                                padding: const EdgeInsets.all(16),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                  
-                                  CircleAvatar(
-                                    backgroundColor: const Color.fromARGB(255, 88, 88, 88),
-                                    radius: 11,
-                                      child: Icon(
-                                        isSelected ? Icons.check : null,
-                                        color: Colors.white,
-                                        size: 16,
-                                      )),
-                                    const Spacer(),
-                                    Text(
-                                      '₹${plan['amount']}/mo',
-                                      style: const TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.w600,
+                 Text(
+                        totalItems.body!.title!,
+                          style: const TextStyle(
+                            color: Color.fromARGB(255, 103, 146, 158),
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold
                                       ),
-                                    ),
-                                    const SizedBox(height: 4),
-                                    Text(
-                                      'for ${plan['duration']} months',
-                                      style: TextStyle(
-                                        color: Colors.white.withOpacity(0.6),
-                                        fontSize: 14,
                                       ),
+                  const SizedBox(height: 8),
+                   Text(
+                        totalItems.body!.subtitle!,
+                        style: TextStyle(
+                            color: Colors.grey[400],
+                              fontSize: 12,
+                            ),
+                          ),
+                  const SizedBox(height: 24),
+                    
+                                 
+                  // Plans
+                  SizedBox(
+                    height: 160,
+                    child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: totalItems.body!.items!.length,
+                      itemBuilder: (context, index) {
+                        
+                        Color ? color ;
+                        final plan = totalItems.body!.items![index];
+                        if(index == 0)
+                          color = const Color.fromARGB(246, 104, 47, 39);
+                        else if (index == 1)
+                          color = const Color.fromARGB(172, 202, 174, 248);
+                        else
+                        color = const Color.fromARGB(255, 35, 74, 105);
+                        final isSelected = selectedPlanIndex == index;
+                        final splitted = plan.emi!.split(' ');
+                        return GestureDetector(
+                          onTap: () => setState(() => selectedPlanIndex = index),
+                          child: Container(
+                            width: 130,
+                            margin: const EdgeInsets.only(right: 16),
+                            decoration: BoxDecoration(
+                              color: color,
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                            child: Stack(
+                              children: [
+                              
+                                Padding(
+                                  padding: const EdgeInsets.all(16),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                    
+                                    Container(
+                                      margin: EdgeInsets.only(top : 15),
+                                      child: CircleAvatar(
+                                        backgroundColor: const Color.fromARGB(255, 161, 161, 161),
+                                        radius: 11,
+                                          child: Icon(
+                                            isSelected ? Icons.check : null,
+                                            color: Colors.white,
+                                            size: 20,
+                                          )),
                                     ),
-                                    const SizedBox(height: 8),
-                                    Text(
-                                      'See calculations',
-                                      style: TextStyle(
-                                        color: Colors.white.withOpacity(0.4),
-                                        fontSize: 12,
-                                        decoration: TextDecoration.underline,
-                                        decorationStyle: TextDecorationStyle.dotted,
-                                        decorationColor: Colors.indigo
+                                      const Spacer(),
+                                      RichText(
+                                        
+                                        text : TextSpan(text: splitted[0] ,
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                        children: const [
+                                          TextSpan(
+                                            text: '/mo',
+                                              style: TextStyle(
+                                          color: Color.fromARGB(255, 167, 158, 158),
+                                          fontSize: 12,
+                                          
+                                        ),
+                                          )
+                                        ]
+                                      )
                                       ),
-                                    ),
-                                  ],
+                                      const SizedBox(height: 2),
+                                      Text(
+                                        'for ${plan.duration!}',
+                                        style: TextStyle(
+                                          color: Colors.white.withOpacity(0.6),
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w400
+                                        ),
+                                      ),
+                                      const SizedBox(height: 8),
+                                      Text(
+                                        plan.subtitle!,
+                                        style: TextStyle(
+                                          color: Colors.white.withOpacity(0.4),
+                                          fontSize: 10,
+                                          decoration: TextDecoration.underline,
+                                          decorationStyle: TextDecorationStyle.dotted,
+                                          decorationColor: Colors.indigo
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                ),
-                
-                // Create Plan Button
-                const SizedBox(height: 24),
-                Container(
-                  width: 150,
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.white24),
-                    borderRadius: BorderRadius.circular(24),
-                  ),
-                  child: TextButton(
-                    
-                    onPressed: () {},
-                    style: TextButton.styleFrom(
-                      
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 24,
-                        vertical: 12,
-                      ),
-                    ),
-                    
-                    child: Text(
-                      'Create your own plan',
-                      style: TextStyle(
-                        color: Colors.white.withOpacity(0.8),
-                        fontSize: 10
-                      ),
-                    ),
-                  ),
-                ),
-                
-                const Spacer(),
-                
-              
-              ],
-            ),
-          ),
-                        Positioned(
-                          top: 240,
-                          left: 202,
+                                if(plan.tag == 'recommended')
+                                     Positioned(
+                          top: 0,
+                          left: 24,
+                          
                                   child: Container(
                                     padding: const EdgeInsets.symmetric(
                                       horizontal: 8,
@@ -242,32 +295,51 @@ class _EMISelectionScreenState extends State<EMISelectionScreen> {
                                     ),
                                   ),
                                 ),
-          // Bottom Button
-                Positioned(
-                  bottom: 0,
-                  right: 0,
-                  left: 0,
-                  child: ElevatedButton(
-                    onPressed: () {},
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF3949AB),
-                      minimumSize: const Size(double.infinity, 56),
-                      shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.only(topLeft: Radius.circular(12),
-                        topRight: Radius.circular(20)),
-                      ),
+                          ],
+
+                            ),
+                          ),
+                        );
+                      },
                     ),
-                    child: const Text(
-                      'Select your bank account',
-                      style: TextStyle(
-                        color: Colors.white70,
-                        fontSize: 16,
+                  ),
+                  
+                  // Create Plan Button
+                  const SizedBox(height: 24),
+                  Container(
+                    width: 150,
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.white24),
+                      borderRadius: BorderRadius.circular(24),
+                    ),
+                    child: TextButton(
+                      
+                      onPressed: () {},
+                      style: TextButton.styleFrom(
+                        
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 24,
+                          vertical: 12,
+                        ),
+                      ),
+                      
+                      child: Text(
+                        totalItems.body!.footer!,
+                        style: TextStyle(
+                          color: Colors.white.withOpacity(0.8),
+                          fontSize: 10
+                        ),
                       ),
                     ),
                   ),
-                ),
-        ]),
-      ),
+                  
+                  const Spacer(),
+                  
+                
+                ],
+              ),
     );
+                 
+        
   }
 }

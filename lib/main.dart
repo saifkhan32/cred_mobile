@@ -1,13 +1,16 @@
-import 'package:cred_mobile/constants/loader.dart';
-import 'package:cred_mobile/screens/emi_screen.dart';
 
-import 'package:cred_mobile/screens/first_screen.dart';
+import 'package:cred_mobile/provider/provider.dart';
+
 import 'package:cred_mobile/screens/home_screen.dart';
-import 'package:cred_mobile/screens/loan_screen.dart';
+
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(MultiProvider(providers: [
+    ChangeNotifierProvider(create: (context)=>  MyModel())
+  ],
+  child: const MyApp()));
 }
 
 class MyApp extends StatelessWidget {
@@ -17,14 +20,14 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'CRED',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
  
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: HomeScreen()
+      home: const HomeScreen()
     );
   }
 }

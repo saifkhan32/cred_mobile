@@ -88,7 +88,7 @@ class ClosedState {
 class Body {
   String? title;
   String? subtitle;
-  Card? card;
+  Cards? card;
   String? footer;
   List<Items2>? items;
   Body({this.title, this.subtitle, this.card, this.footer,this.items });
@@ -96,7 +96,7 @@ class Body {
   Body.fromJson(Map<String, dynamic> json) {
     title = json['title'];
     subtitle = json['subtitle'];
-    card = json['card'] != null ? Card.fromJson(json['card']) : null;
+    card = json['card'] != null ? Cards.fromJson(json['card']) : null;
     footer = json['footer'];
       if (json['items'] != null) {
       items = <Items2>[];
@@ -121,15 +121,15 @@ class Body {
   }
 }
 
-class Card {
+class Cards {
   String? header;
   String? description;
   int? maxRange;
   int? minRange;
 
-  Card({this.header, this.description, this.maxRange, this.minRange});
+  Cards({this.header, this.description, this.maxRange, this.minRange});
 
-  Card.fromJson(Map<String, dynamic> json) {
+  Cards.fromJson(Map<String, dynamic> json) {
     header = json['header'];
     description = json['description'];
     maxRange = json['max_range'];

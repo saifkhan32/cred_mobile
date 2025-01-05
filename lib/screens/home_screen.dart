@@ -1,9 +1,13 @@
 import 'package:cred_mobile/constants/bottom_button.dart';
 import 'package:cred_mobile/constants/loader.dart';
 import 'package:cred_mobile/models/items.dart';
+import 'package:cred_mobile/provider/provider.dart';
+import 'package:cred_mobile/screens/emi_screen.dart';
 import 'package:cred_mobile/screens/first_screen.dart';
+import 'package:cred_mobile/screens/loan_screen.dart';
 import 'package:cred_mobile/service/auth_service.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -16,11 +20,11 @@ class _HomeScreenState extends State<HomeScreen> {
   AuthService authService = AuthService();
   ItemData? items;
   
-  String title = 'Proceed To EMI Selection';
-  int _currentSlider = 0;
+ 
+
   @override
   void initState() {
-    // TODO: implement initState
+  
     super.initState();
     getData();
     
@@ -37,15 +41,17 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     
     return Scaffold(
-       backgroundColor: const Color(0xFF1A1B1E),
-       
-      appBar: PreferredSize(preferredSize: Size.fromHeight(50), 
+       backgroundColor: const Color.fromARGB(255, 61, 61, 61),
+       //Bar with two icons 
+
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(60), 
       child: AppBar(
         flexibleSpace: Container(
-          decoration: BoxDecoration(color: const Color(0xFF1A1A1A)),
+          decoration: const BoxDecoration(color: Color.fromARGB(255, 32, 36, 46)),
         ),
         title:  Padding(
-                        padding: EdgeInsets.all(16),
+                        padding: const EdgeInsets.symmetric(horizontal: 0),
                         child: Container(
                                           alignment: Alignment.topLeft,
                                           child: Row(
@@ -77,19 +83,42 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
       ),),
         body:  items == null ? const Center(child: Loader()) : 
-              Stack(
-              children: [        
-      CreditSelector(completedInfo : _currentSlider == 0),
-         BottomButton(
-            onTap : (){
-              setState(() {
-                _currentSlider++;
-              });
-             
-            }, title: title,
-          ),
+              Consumer<MyModel>(
+                builder: (context, model, child) {
 
-    ])
+                  return Stack(
+                children: [        
+                      CreditSelector(completedInfo : model.value == 0,item : items),
+                      if(model.value == 1 || model.value == 2)
+                      Positioned(
+                            top: 75,
+                            left: 0,
+                            right: 0,
+                            bottom: 0,
+                        child: EMISelectionScreen(completedInfo: model.value==1,item : items,)) ,
+                        if(model.value==2)
+                      Positioned(
+                            top: 155,
+                            left: 0,
+                            right: 0,
+                            bottom: 0,
+                        child: LoanScreen(completedInfo: model.value==2,item : items)) ,
+                         BottomButton(
+                            onTap : (){
+                               if(model.value<=1) {
+                    model.value++;
+                  }
+                setState(() {
+                 
+                  
+                });
+                
+                             
+                            }, title: items!.items![model.value].ctaText!,
+                          ),
+                
+                    ]);}
+              )
   );
   }
 }
